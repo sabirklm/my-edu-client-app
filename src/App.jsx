@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import HomePage from './pages/HomePage';
 
-function App() {
-  const [count, setCount] = useState(0)
 
+function MocksPage() {
+  const navigate = useNavigate();
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="underline">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <button onClick={() => navigate('/mocks/1')}>Go to Mock 1</button>
+    </div>
+  );
 }
 
-export default App
+function MockDetailPage() {
+  const navigate = useNavigate();
+  return (
+    <div>
+      <button onClick={() => navigate('/about')}>Go to About</button>
+    </div>
+  );
+}
+
+function AboutPage() {
+  const navigate = useNavigate();
+  return (
+    <div>
+      <button onClick={() => navigate('/contact')}>Go to Contact</button>
+    </div>
+  );
+}
+
+function ContactPage() {
+  const navigate = useNavigate();
+  return (
+    <div>
+      <button onClick={() => navigate('/')}>Go Home</button>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/mocks" element={<MocksPage />} />
+        <Route path="/mocks/:id" element={<MockDetailPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
