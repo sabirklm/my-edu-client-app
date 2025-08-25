@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
+import MockExamPage from './pages/MockExamPage';
 
 
 function MocksPage() {
@@ -11,14 +12,6 @@ function MocksPage() {
   );
 }
 
-function MockDetailPage() {
-  const navigate = useNavigate();
-  return (
-    <div>
-      <button onClick={() => navigate('/about')}>Go to About</button>
-    </div>
-  );
-}
 
 function AboutPage() {
   const navigate = useNavigate();
@@ -44,7 +37,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/mocks" element={<MocksPage />} />
-        <Route path="/mocks/:id" element={<MockDetailPage />} />
+        <Route path="/mocks/:id" element={<MockExamPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
       </Routes>
