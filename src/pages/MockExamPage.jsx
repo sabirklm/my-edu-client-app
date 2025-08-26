@@ -1,124 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Clock, CheckCircle, Circle, Square, CheckSquare, ChevronLeft, ChevronRight, Flag, RotateCcw, BookOpen, Timer, Award, AlertCircle, Home, Settings, User, Menu, X, Eye, EyeOff, HelpCircle, TrendingUp, Target, Zap, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Clock, CheckCircle, CheckSquare, ChevronLeft, ChevronRight, Flag, RotateCcw, BookOpen, Timer, Award, AlertCircle, Home, Menu, X, EyeOff, HelpCircle, TrendingUp, Target, Zap, Star, Loader } from 'lucide-react';
 
-// Mock data structure based on your CMS config
-const mockExamData = {
-    id: '1',
-    name: 'Advanced Mathematics Assessment',
-    description: 'A comprehensive test covering algebra, calculus, and geometry concepts.',
-    timeLimit: 45, // minutes
-    QuestionGroups: [
-        {
-            id: 'group1',
-            name: 'Algebra Fundamentals',
-            description: 'Basic algebraic concepts and equations',
-            randomize: false,
-            questions: [
-                {
-                    id: 'q1',
-                    title: 'Solve for x: $2x + 5 = 15$',
-                    subtitle: 'Linear equation solving',
-                    hint: 'Isolate x by performing the same operation on both sides',
-                    type: 'single-select',
-                    difficulty: 'easy',
-                    points: 2,
-                    tags: ['algebra', 'linear-equations'],
-                    options: [
-                        { id: 'opt1', label: 'x = 5', isCorrect: true },
-                        { id: 'opt2', label: 'x = 10', isCorrect: false },
-                        { id: 'opt3', label: 'x = 7.5', isCorrect: false },
-                        { id: 'opt4', label: 'x = -5', isCorrect: false }
-                    ]
-                },
-                {
-                    id: 'q2',
-                    title: 'Which of the following are prime numbers?',
-                    subtitle: 'Select all that apply',
-                    type: 'multi-select',
-                    difficulty: 'medium',
-                    points: 3,
-                    tags: ['number-theory', 'primes'],
-                    options: [
-                        { id: 'opt1', label: '17', isCorrect: true },
-                        { id: 'opt2', label: '21', isCorrect: false },
-                        { id: 'opt3', label: '23', isCorrect: true },
-                        { id: 'opt4', label: '25', isCorrect: false },
-                        { id: 'opt5', label: '29', isCorrect: true }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 'group2',
-            name: 'Calculus Basics',
-            description: 'Fundamental calculus concepts',
-            randomize: true,
-            questions: [
-                {
-                    id: 'q3',
-                    title: 'What is the derivative of $f(x) = x^3 + 2x^2 - x + 5$?',
-                    type: 'text',
-                    difficulty: 'hard',
-                    points: 5,
-                    tags: ['calculus', 'derivatives'],
-                    correctAnswer: '3x^2 + 4x - 1'
-                },
-                {
-                    id: 'q4',
-                    title: 'The fundamental theorem of calculus connects which two concepts?',
-                    type: 'single-select',
-                    difficulty: 'medium',
-                    points: 3,
-                    tags: ['calculus', 'theory'],
-                    options: [
-                        { id: 'opt1', label: 'Derivatives and integrals', isCorrect: true },
-                        { id: 'opt2', label: 'Limits and continuity', isCorrect: false },
-                        { id: 'opt3', label: 'Functions and graphs', isCorrect: false },
-                        { id: 'opt4', label: 'Sequences and series', isCorrect: false }
-                    ]
-                },
-                {
-                    id: 'q5',
-                    title: 'What is the limit of $\\frac{\\sin(x)}{x}$ as x approaches 0?',
-                    subtitle: 'This is a fundamental limit in calculus',
-                    hint: 'This is one of the most important limits in calculus - think about the unit circle',
-                    type: 'single-select',
-                    difficulty: 'medium',
-                    points: 4,
-                    tags: ['calculus', 'limits'],
-                    options: [
-                        { id: 'opt1', label: '0', isCorrect: false },
-                        { id: 'opt2', label: '1', isCorrect: true },
-                        { id: 'opt3', label: '∞', isCorrect: false },
-                        { id: 'opt4', label: 'undefined', isCorrect: false }
-                    ]
-                },
-                {
-                    id: 'q6',
-                    title: 'Which of the following functions are continuous everywhere?',
-                    type: 'multi-select',
-                    difficulty: 'hard',
-                    points: 6,
-                    tags: ['calculus', 'continuity'],
-                    options: [
-                        { id: 'opt1', label: 'f(x) = x²', isCorrect: true },
-                        { id: 'opt2', label: 'f(x) = |x|', isCorrect: true },
-                        { id: 'opt3', label: 'f(x) = 1/x', isCorrect: false },
-                        { id: 'opt4', label: 'f(x) = sin(x)', isCorrect: true },
-                        { id: 'opt5', label: 'f(x) = floor(x)', isCorrect: false }
-                    ]
-                }
-            ]
-        }
-    ]
-};
-
-const MockExamPage = () => {
-    const [examData] = useState(mockExamData);
+const ExamPage = () => {
+    const [examData, setExamData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState({});
     const [flaggedQuestions, setFlaggedQuestions] = useState(new Set());
-    const [timeRemaining, setTimeRemaining] = useState(examData.timeLimit * 60);
+    const [timeRemaining, setTimeRemaining] = useState(0);
     const [examStarted, setExamStarted] = useState(false);
     const [examCompleted, setExamCompleted] = useState(false);
     const [showResults, setShowResults] = useState(false);
@@ -126,10 +16,70 @@ const MockExamPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showWarning, setShowWarning] = useState(false);
 
-    // Flatten all questions from question groups
-    const allQuestions = examData.QuestionGroups.reduce((acc, group) => {
-        return [...acc, ...group.questions];
+    // Fetch exam data from API
+    useEffect(() => {
+        const fetchExamData = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch('https://educational-app-backend-poc.onrender.com/api/question-groups');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const apiData = await response.json();
+                
+                if (!apiData.success || !apiData.data || apiData.data.length === 0) {
+                    throw new Error('No question groups found');
+                }
+
+                // Transform API data to match component structure
+                const transformedData = {
+                    id: apiData.data[0]._id,
+                    name: apiData.data[0].name,
+                    description: `Assessment containing ${apiData.data.length} question group${apiData.data.length > 1 ? 's' : ''}`,
+                    timeLimit: 45, // Default time limit since not in API
+                    questionGroups: apiData.data.map(group => ({
+                        id: group._id,
+                        name: group.name,
+                        description: `Contains ${group.questions.length} questions`,
+                        randomize: group.randomize,
+                        questions: group.questions.map(question => ({
+                            id: question._id,
+                            title: question.title,
+                            subtitle: question.type === 'multi-select' ? 'Select all that apply' : undefined,
+                            type: question.type,
+                            difficulty: question.difficulty || 'medium',
+                            points: question.points || 1,
+                            tags: question.tags || [],
+                            options: question.options ? question.options.map(option => ({
+                                id: option.id,
+                                label: option.label,
+                                isCorrect: option.isCorrect
+                            })) : undefined,
+                            correctAnswer: question.correctAnswer // for text questions
+                        }))
+                    }))
+                };
+
+                setExamData(transformedData);
+                setTimeRemaining(transformedData.timeLimit * 60);
+                setError(null);
+            } catch (err) {
+                console.error('Failed to fetch exam data:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchExamData();
     }, []);
+
+    // Flatten all questions from question groups
+    const allQuestions = examData ? examData.questionGroups.reduce((acc, group) => {
+        return [...acc, ...group.questions];
+    }, []) : [];
 
     const currentQuestion = allQuestions[currentQuestionIndex];
     const totalQuestions = allQuestions.length;
@@ -137,7 +87,7 @@ const MockExamPage = () => {
     // Timer effect
     useEffect(() => {
         let interval;
-        if (examStarted && !examCompleted && timeRemaining > 0) {
+        if (examStarted && !examCompleted && timeRemaining > 0 && examData) {
             interval = setInterval(() => {
                 setTimeRemaining(prev => {
                     if (prev <= 300 && prev > 299) { // 5 minutes warning
@@ -152,7 +102,7 @@ const MockExamPage = () => {
             }, 1000);
         }
         return () => clearInterval(interval);
-    }, [examStarted, examCompleted, timeRemaining]);
+    }, [examStarted, examCompleted, timeRemaining, examData]);
 
     // Format time display
     const formatTime = (seconds) => {
@@ -282,11 +232,42 @@ const MockExamPage = () => {
         return { label: 'Needs Improvement', color: 'bg-red-100 text-red-800', icon: AlertCircle };
     };
 
+    // Loading state
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+                <div className="text-center">
+                    <Loader className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-2">Loading Assessment</h2>
+                    <p className="text-gray-600">Please wait while we prepare your questions...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-pink-50 flex items-center justify-center">
+                <div className="max-w-md mx-auto text-center p-8 bg-white rounded-xl shadow-lg">
+                    <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Unable to Load Assessment</h2>
+                    <p className="text-gray-600 mb-6">{error}</p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     // Pre-exam start screen
     if (!examStarted) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-
                 <div className="max-w-4xl mx-auto px-4 py-12">
                     <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
                         {/* Header Section */}
@@ -375,8 +356,6 @@ const MockExamPage = () => {
 
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-emerald-50">
-
-
                 <div className="max-w-4xl mx-auto px-4 py-12">
                     <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
                         {/* Results Header */}
@@ -448,21 +427,21 @@ const MockExamPage = () => {
                                 </h3>
                                 <div className="space-y-3 text-sm">
                                     {score.percentage >= 90 && (
-                                        <p className="text-green-700">🎉 Outstanding performance! You've mastered this material excellently.</p>
+                                        <p className="text-green-700">Outstanding performance! You've mastered this material excellently.</p>
                                     )}
                                     {score.percentage >= 80 && score.percentage < 90 && (
-                                        <p className="text-blue-700">👏 Very good work! You have a strong understanding of the concepts.</p>
+                                        <p className="text-blue-700">Very good work! You have a strong understanding of the concepts.</p>
                                     )}
                                     {score.percentage >= 70 && score.percentage < 80 && (
-                                        <p className="text-yellow-700">👍 Good job! Consider reviewing a few key areas for improvement.</p>
+                                        <p className="text-yellow-700">Good job! Consider reviewing a few key areas for improvement.</p>
                                     )}
                                     {score.percentage < 70 && (
-                                        <p className="text-red-700">📚 Keep practicing! Review the material and try again to improve your score.</p>
+                                        <p className="text-red-700">Keep practicing! Review the material and try again to improve your score.</p>
                                     )}
 
                                     {Object.keys(answers).length < totalQuestions && (
                                         <p className="text-orange-700">
-                                            ⚠️ You left {totalQuestions - Object.keys(answers).length} questions unanswered.
+                                            You left {totalQuestions - Object.keys(answers).length} questions unanswered.
                                             Make sure to answer all questions next time for a better score.
                                         </p>
                                     )}
@@ -490,7 +469,7 @@ const MockExamPage = () => {
         );
     }
 
-    // Main exam interface
+    // Main exam interface - rest of the component remains the same as before
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Time Warning Modal */}
@@ -525,7 +504,6 @@ const MockExamPage = () => {
                             </button>
                             <div className="flex items-center">
                                 <BookOpen className="w-8 h-8 text-blue-600" />
-
                             </div>
                         </div>
 
@@ -853,7 +831,7 @@ const MockExamPage = () => {
                                         )}
                                     </div>
 
-                                    {/* Hint Section */}
+                                    {/* Hint Section - Only show if question has a hint */}
                                     {currentQuestion.hint && (
                                         <div className="border-t pt-6">
                                             <button
@@ -933,4 +911,4 @@ const MockExamPage = () => {
     );
 };
 
-export default MockExamPage;
+export default ExamPage;
