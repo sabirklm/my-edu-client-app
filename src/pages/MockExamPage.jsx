@@ -28,8 +28,8 @@ const ExamPage = () => {
                 setLoading(true);
                 //Test Data - http://localhost:5173/mocks/68aa3554eb65a371b7a4dafc
                 console.log(`Question Group Id ${id}`);
-                // var api = `https://educational-app-backend-poc.onrender.com/api/question-groups?qgid=${questionGroupId}`;
-                const api = `http://localhost:4000/api/question-groups/${id}`;
+                const api = `https://educational-app-backend-poc.onrender.com/api/question-groups/${id}`;
+                // const api = `http://localhost:4000/api/question-groups/${id}`;
                 setLoading(true);
                 const response = await fetch(api);
 
