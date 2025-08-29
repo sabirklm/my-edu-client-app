@@ -23,6 +23,7 @@ import {
   Loader,
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
+import { Modal } from 'antd';
 
 const ExamPage = () => {
   const [examData, setExamData] = useState(null);
@@ -39,6 +40,29 @@ const ExamPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const { id } = useParams();
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  // const [modalText, setModalText] = useState('Content of the modal');
+
+  const showModal = () => {
+    setOpen(true);
+  };
+
+  const handleOk = () => {
+    // setModalText('The modal will be closed after two seconds');
+    setConfirmLoading(true);
+
+    submitExam();
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    console.log('Clicked cancel button');
+    setOpen(false);
+  };
 
   // Fetch exam data - Modified to use new data structure
   useEffect(() => {
@@ -609,7 +633,7 @@ const ExamPage = () => {
                 {formatTime(timeRemaining)}
               </div>
               <button
-                onClick={submitExam}
+                onClick={showModal}
                 className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
               >
                 Submit Exam
@@ -761,6 +785,80 @@ const ExamPage = () => {
         <div className="flex-1 lg:ml-0">
           <div className="p-6">
             <div className="max-w-4xl mx-auto">
+              <Modal
+                title={
+                  <div
+                    style={{
+                      color: '#1890ff',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    📝 Submit Exam
+                  </div>
+                }
+                open={open}
+                onOk={handleOk}
+                confirmLoading={confirmLoading}
+                onCancel={handleCancel}
+                okText="Submit Exam"
+                cancelText="Continue"
+                okButtonProps={{ danger: true, size: 'large' }}
+                cancelButtonProps={{ size: 'large' }}
+                centered
+                bodyStyle={{
+                  background:
+                    'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                  padding: '24px',
+                }}
+              >
+                <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                  <div
+                    style={{
+                      background: '#fff2f0',
+                      border: '1px solid #ffccc7',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: '#ff7875',
+                        fontSize: '24px',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      ⚠️
+                    </div>
+                    <p style={{ margin: 0, fontWeight: 'bold' }}>
+                      Are you sure you want to submit?
+                    </p>
+                    <p
+                      style={{
+                        margin: '8px 0 0 0',
+                        color: '#8c8c8c',
+                        fontSize: '14px',
+                      }}
+                    >
+                      You won't be able to make changes after submission.
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      background: '#f6ffed',
+                      border: '1px solid #b7eb8f',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      fontSize: '14px',
+                      color: '#52c41a',
+                    }}
+                  >
+                    ✅ Your answers will be saved automatically
+                  </div>
+                </div>
+              </Modal>
               {/* Question Card */}
               <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                 {/* Question Header */}
