@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import MockExamPage from './pages/MockExamPage';
 
-
 function MocksPage() {
   const navigate = useNavigate();
   return (
@@ -11,7 +10,6 @@ function MocksPage() {
     </div>
   );
 }
-
 
 function AboutPage() {
   const navigate = useNavigate();
