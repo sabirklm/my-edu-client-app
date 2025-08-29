@@ -1,5 +1,9 @@
+
 import { useState, useEffect } from 'react';
 import { Clock, CheckCircle, CheckSquare, ChevronLeft, ChevronRight, Flag, RotateCcw, BookOpen, Timer, Award, AlertCircle, Home, Menu, X, EyeOff, HelpCircle, TrendingUp, Target, Zap, Star, Loader } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+
+
 
 const ExamPage = () => {
     const [examData, setExamData] = useState(null);
@@ -15,50 +19,54 @@ const ExamPage = () => {
     const [showHints, setShowHints] = useState({});
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [showWarning, setShowWarning] = useState(false);
+    const { id } = useParams();
 
-    // Fetch exam data from API
+    // Fetch exam data - Modified to use new data structure
     useEffect(() => {
         const fetchExamData = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('https://educational-app-backend-poc.onrender.com/api/question-groups');
-                
+                //Test Data - http://localhost:5173/mocks/68aa3554eb65a371b7a4dafc
+                console.log(`Question Group Id ${id}`);
+                // var api = `https://educational-app-backend-poc.onrender.com/api/question-groups?qgid=${questionGroupId}`;
+                const api = `http://localhost:4000/api/question-groups/${id}`;
+                setLoading(true);
+                const response = await fetch(api);
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 const apiData = await response.json();
-                
-                if (!apiData.success || !apiData.data || apiData.data.length === 0) {
-                    throw new Error('No question groups found');
+
+                // Simulate API call with your data structure
+                // await new Promise(resolve => setTimeout(resolve, 1000));
+                // const apiData = mockExamData;
+
+                if (!apiData.success || !apiData.data) {
+                    throw new Error('No exam data found');
                 }
 
-                // Transform API data to match component structure
+                // Transform API data to match component structure - UPDATED
                 const transformedData = {
-                    id: apiData.data[0]._id,
-                    name: apiData.data[0].name,
-                    description: `Assessment containing ${apiData.data.length} question group${apiData.data.length > 1 ? 's' : ''}`,
+                    id: apiData.data._id,
+                    name: apiData.data.name,
+                    description: `Assessment containing ${apiData.data.questions.length} questions`,
                     timeLimit: 45, // Default time limit since not in API
-                    questionGroups: apiData.data.map(group => ({
-                        id: group._id,
-                        name: group.name,
-                        description: `Contains ${group.questions.length} questions`,
-                        randomize: group.randomize,
-                        questions: group.questions.map(question => ({
-                            id: question._id,
-                            title: question.title,
-                            subtitle: question.type === 'multi-select' ? 'Select all that apply' : undefined,
-                            type: question.type,
-                            difficulty: question.difficulty || 'medium',
-                            points: question.points || 1,
-                            tags: question.tags || [],
-                            options: question.options ? question.options.map(option => ({
-                                id: option.id,
-                                label: option.label,
-                                isCorrect: option.isCorrect
-                            })) : undefined,
-                            correctAnswer: question.correctAnswer // for text questions
-                        }))
+                    questions: apiData.data.questions.map(question => ({
+                        id: question._id,
+                        title: question.title,
+                        subtitle: question.type === 'multi-select' ? 'Select all that apply' : undefined,
+                        type: question.type,
+                        difficulty: question.difficulty || 'medium',
+                        points: question.points || 1,
+                        tags: question.tags || [],
+                        options: question.options ? question.options.map(option => ({
+                            id: option.id,
+                            label: option.label,
+                            isCorrect: option.isCorrect
+                        })) : undefined,
+                        correctAnswer: question.correctAnswer // for text questions
                     }))
                 };
 
@@ -76,11 +84,8 @@ const ExamPage = () => {
         fetchExamData();
     }, []);
 
-    // Flatten all questions from question groups
-    const allQuestions = examData ? examData.questionGroups.reduce((acc, group) => {
-        return [...acc, ...group.questions];
-    }, []) : [];
-
+    // Use questions directly from examData - UPDATED
+    const allQuestions = examData ? examData.questions : [];
     const currentQuestion = allQuestions[currentQuestionIndex];
     const totalQuestions = allQuestions.length;
 
@@ -270,7 +275,6 @@ const ExamPage = () => {
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
                 <div className="max-w-4xl mx-auto px-4 py-12">
                     <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                        {/* Header Section */}
                         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-12">
                             <div className="text-center">
                                 <div className="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-6">
@@ -283,7 +287,6 @@ const ExamPage = () => {
                             </div>
                         </div>
 
-                        {/* Content Section */}
                         <div className="px-8 py-8">
                             <div className="grid md:grid-cols-3 gap-8 mb-8">
                                 <div className="text-center p-6 bg-blue-50 rounded-xl">
@@ -358,7 +361,6 @@ const ExamPage = () => {
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-emerald-50">
                 <div className="max-w-4xl mx-auto px-4 py-12">
                     <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                        {/* Results Header */}
                         <div className="bg-gradient-to-r from-green-500 to-emerald-500 px-8 py-12">
                             <div className="text-center">
                                 <div className="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-6">
@@ -371,9 +373,7 @@ const ExamPage = () => {
                             </div>
                         </div>
 
-                        {/* Results Content */}
                         <div className="px-8 py-8">
-                            {/* Score Display */}
                             <div className="text-center mb-8">
                                 <div className={`text-7xl font-bold mb-4 ${getScoreColor(score.percentage)}`}>
                                     {score.percentage}%
@@ -384,7 +384,6 @@ const ExamPage = () => {
                                 </div>
                             </div>
 
-                            {/* Detailed Stats */}
                             <div className="grid md:grid-cols-4 gap-6 mb-8">
                                 <div className="bg-blue-50 rounded-xl p-6 text-center">
                                     <div className="text-3xl font-bold text-blue-600 mb-2">
@@ -419,36 +418,6 @@ const ExamPage = () => {
                                 </div>
                             </div>
 
-                            {/* Performance Insights */}
-                            <div className="bg-gray-50 rounded-xl p-6 mb-8">
-                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
-                                    <TrendingUp className="w-5 h-5 mr-2 text-blue-600" />
-                                    Performance Insights
-                                </h3>
-                                <div className="space-y-3 text-sm">
-                                    {score.percentage >= 90 && (
-                                        <p className="text-green-700">Outstanding performance! You've mastered this material excellently.</p>
-                                    )}
-                                    {score.percentage >= 80 && score.percentage < 90 && (
-                                        <p className="text-blue-700">Very good work! You have a strong understanding of the concepts.</p>
-                                    )}
-                                    {score.percentage >= 70 && score.percentage < 80 && (
-                                        <p className="text-yellow-700">Good job! Consider reviewing a few key areas for improvement.</p>
-                                    )}
-                                    {score.percentage < 70 && (
-                                        <p className="text-red-700">Keep practicing! Review the material and try again to improve your score.</p>
-                                    )}
-
-                                    {Object.keys(answers).length < totalQuestions && (
-                                        <p className="text-orange-700">
-                                            You left {totalQuestions - Object.keys(answers).length} questions unanswered.
-                                            Make sure to answer all questions next time for a better score.
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Action Buttons */}
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <button
                                     onClick={resetExam}
@@ -469,7 +438,7 @@ const ExamPage = () => {
         );
     }
 
-    // Main exam interface - rest of the component remains the same as before
+    // Main exam interface
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Time Warning Modal */}
@@ -512,8 +481,7 @@ const ExamPage = () => {
                                 Question <span className="font-semibold">{currentQuestionIndex + 1}</span> of {totalQuestions}
                             </div>
                             <div className="w-px h-6 bg-gray-300"></div>
-                            <div className={`flex items-center font-mono text-lg font-semibold ${timeRemaining <= 300 ? 'text-red-600' : 'text-gray-700'
-                                }`}>
+                            <div className={`flex items-center font-mono text-lg font-semibold ${timeRemaining <= 300 ? 'text-red-600' : 'text-gray-700'}`}>
                                 <Clock className="w-5 h-5 mr-2" />
                                 {formatTime(timeRemaining)}
                             </div>
@@ -526,8 +494,7 @@ const ExamPage = () => {
                         </div>
 
                         <div className="sm:hidden flex items-center space-x-2">
-                            <div className={`font-mono text-sm font-semibold ${timeRemaining <= 300 ? 'text-red-600' : 'text-gray-700'
-                                }`}>
+                            <div className={`font-mono text-sm font-semibold ${timeRemaining <= 300 ? 'text-red-600' : 'text-gray-700'}`}>
                                 {formatTime(timeRemaining)}
                             </div>
                             <button
@@ -543,8 +510,7 @@ const ExamPage = () => {
 
             <div className="max-w-7xl mx-auto flex">
                 {/* Sidebar - Question Navigator */}
-                <div className={`
-          fixed lg:static inset-y-0 left-0 z-30 w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0
+                <div className={`fixed lg:static inset-y-0 left-0 z-30 w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
                     <div className="h-full overflow-y-auto p-6 pt-20 lg:pt-6">
@@ -831,7 +797,7 @@ const ExamPage = () => {
                                         )}
                                     </div>
 
-                                    {/* Hint Section - Only show if question has a hint */}
+                                    {/* Hint Section */}
                                     {currentQuestion.hint && (
                                         <div className="border-t pt-6">
                                             <button
