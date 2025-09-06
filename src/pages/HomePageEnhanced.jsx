@@ -2,19 +2,15 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   BookOpen,
-  Users,
   Award,
   TrendingUp,
   Clock,
-  Star,
   ArrowRight,
   Play,
   Target,
   Zap,
-  CheckCircle,
   BarChart3,
   Bookmark,
-  History,
   Lightbulb
 } from 'lucide-react';
 import Navigation from '../components/common/Navigation';

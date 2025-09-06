@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  BookOpen, Users, Award, TrendingUp, Clock, CheckCircle, Star, ArrowRight,
-  Play, Target, Zap, BarChart3, Bookmark, History, Lightbulb, Calendar,
-  Eye, User, Bell, AlertCircle, Search, Filter, ExternalLink, ChevronRight
-} from 'lucide-react';
-import { Button, Card, Input, Tag, Statistic, Avatar } from 'antd';
+  BookOpen, Award, TrendingUp, Clock, ArrowRight,
+  Play, Target, BarChart3, History, Lightbulb, 
+  Eye, Bell} from 'lucide-react';
+import { Button, Card, Input, Tag, Avatar } from 'antd';
 import '../styles/marquee.css';
 import Navigation from '../components/common/Navigation';
 import { useExamHistory } from '../hooks/useExamProgress';
-import { notifyInfo } from '../utils/notifications';
 import { 
   featuredArticles, 
   latestNews, 

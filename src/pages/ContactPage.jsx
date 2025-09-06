@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Mail, Phone, MapPin, Send, MessageCircle, Clock,
-  CheckCircle, AlertCircle, HelpCircle, BookOpen,
+  CheckCircle, HelpCircle, BookOpen,
   Users, Zap, Heart, Globe, ArrowRight
 } from 'lucide-react';
 import {
   Card, Button, Input, Select, Form, Row, Col,
-  Typography, Divider, Tag, Avatar, Collapse,
+  Typography, Divider, Avatar, Collapse,
   Alert, Steps
 } from 'antd';
 import Navigation from '../components/common/Navigation';

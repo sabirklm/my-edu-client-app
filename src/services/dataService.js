@@ -76,8 +76,13 @@ class DataService {
     return this.handleRequest(
       () => apiService.getExamById(examId),
       null, // No localStorage equivalent for fetching exam structure
-      () => Promise.resolve(mockData.examData)
+      () => Promise.resolve(mockData.examData.data) // Return just the exam data, not the wrapper
     );
+  }
+
+  // Alias method for compatibility with MockExamPageImproved
+  async getExam(examId) {
+    return this.getExamById(examId);
   }
 
   async getExamsList() {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   BookOpen,
@@ -7,9 +7,6 @@ import {
   Filter,
   Search,
   Play,
-  Star,
-  TrendingUp,
-  Users,
   ChevronDown,
   Grid3X3,
   List,
@@ -48,7 +45,7 @@ const ExamListingPage = () => {
       bestScore: Math.max(...attempts.filter(a => a.examId === '68aa3554eb65a371b7a4dafc').map(a => a.percentage), 0)
     },
     {
-      id: 'chem_001',
+      id: '68b1f31532db0e7e195b83f7',
       name: 'JEE Main Chemistry Fundamentals',
       description: 'Essential chemistry concepts for JEE Main preparation',
       category: 'JEE Main',
@@ -63,7 +60,7 @@ const ExamListingPage = () => {
       bestScore: 0
     },
     {
-      id: 'math_001',
+      id: '68b1f31532db0e7e195b83f7',
       name: 'JEE Advanced Mathematics',
       description: 'Advanced mathematical concepts and problem-solving',
       category: 'JEE Advanced',
@@ -78,7 +75,7 @@ const ExamListingPage = () => {
       bestScore: 0
     },
     {
-      id: 'neet_bio_001',
+      id: '68b1f31532db0e7e195b83f7',
       name: 'NEET Biology Comprehensive',
       description: 'Complete biology coverage for NEET preparation',
       category: 'NEET',
@@ -93,7 +90,7 @@ const ExamListingPage = () => {
       bestScore: 0
     },
     {
-      id: 'gate_cs_001',
+      id: '68b1f31532db0e7e195b83f7',
       name: 'GATE Computer Science',
       description: 'Core computer science concepts for GATE CSE',
       category: 'GATE',
@@ -108,7 +105,7 @@ const ExamListingPage = () => {
       bestScore: 0
     },
     {
-      id: 'neet_phy_001',
+      id: '68b1f31532db0e7e195b83f7',
       name: 'NEET Physics Practice',
       description: 'Physics fundamentals for medical entrance',
       category: 'NEET',

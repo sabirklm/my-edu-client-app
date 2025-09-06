@@ -3,7 +3,6 @@ import {
   Target,
   Users,
   Award,
-  Lightbulb,
   BookOpen,
   Clock,
   BarChart3,

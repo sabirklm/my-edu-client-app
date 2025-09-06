@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   BookOpen,
   Users,
   Award,
   TrendingUp,
   Clock,
-  CheckCircle,
-  Star,
   ArrowRight,
   Menu,
   X,

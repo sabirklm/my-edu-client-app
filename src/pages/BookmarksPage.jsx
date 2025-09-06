@@ -10,7 +10,6 @@ import {
   Clock,
   Target,
   ArrowRight,
-  AlertCircle,
   BookOpen,
   Star,
   Trash2,

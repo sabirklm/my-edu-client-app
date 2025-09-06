@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Calendar, Clock, User, Eye, Bookmark, Share2, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, User, Bookmark, Share2, ArrowLeft } from 'lucide-react';
 import { Button, Tag, Divider, Card, Typography } from 'antd';
 import { motion } from 'framer-motion';
 import articleDetails from '../data/ArticleDetailsData.js';

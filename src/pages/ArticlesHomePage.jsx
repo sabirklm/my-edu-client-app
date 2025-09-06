@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  BookOpen, Clock, User, TrendingUp, Star, ArrowRight, 
-  Calendar, Eye, MessageCircle, Bookmark, Share2, Search,
-  Filter, Bell, Award, Users, Target, Lightbulb, Play,
+  Clock, User, Star, ArrowRight, 
+  Eye, Bookmark, Share2, Search,
+  Bell, Target, Play,
   ChevronRight, ExternalLink, AlertCircle
 } from 'lucide-react';
-import { Button, Card, Input, Tag, Carousel, Statistic, Avatar, Badge } from 'antd';
+import { Button, Card, Input, Tag, Carousel, Avatar, Badge } from 'antd';
 import Navigation from '../components/common/Navigation';
 import { 
   featuredArticles, 
   latestNews, 
-  examStats, 
   popularExams, 
   quickStats, 
   testimonials, 
