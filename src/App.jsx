@@ -1,44 +1,28 @@
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import MockExamPage from './pages/MockExamPage';
-
-function MocksPage() {
-  const navigate = useNavigate();
-  return (
-    <div>
-      <button onClick={() => navigate('/mocks/1')}>Go to Mock 1</button>
-    </div>
-  );
-}
-
-function AboutPage() {
-  const navigate = useNavigate();
-  return (
-    <div>
-      <button onClick={() => navigate('/contact')}>Go to Contact</button>
-    </div>
-  );
-}
-
-function ContactPage() {
-  const navigate = useNavigate();
-  return (
-    <div>
-      <button onClick={() => navigate('/')}>Go Home</button>
-    </div>
-  );
-}
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import HomePageEnhanced from './pages/HomePageEnhanced';
+import ExamListingPage from './pages/ExamListingPage';
+import MockExamPageEnhanced from './pages/MockExamPageEnhanced';
+import DashboardPage from './pages/DashboardPage';
+import BookmarksPage from './pages/BookmarksPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/mocks" element={<MocksPage />} />
-        <Route path="/mocks/:id" element={<MockExamPage />} />
+        <Route path="/" element={<HomePageEnhanced />} />
+        <Route path="/exams" element={<ExamListingPage />} />
+        <Route path="/mocks/:id" element={<MockExamPageEnhanced />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/bookmarks" element={<BookmarksPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        {/* Legacy routes for backward compatibility */}
+        <Route path="/mocks" element={<ExamListingPage />} />
       </Routes>
+      <Toaster />
     </BrowserRouter>
   );
 }
